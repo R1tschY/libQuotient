@@ -134,6 +134,10 @@ class Connection::Private
             packAndSendAccountData(
                         makeEvent<EventT>(std::forward<ContentT>(content)));
         }
+        QString topLevelStatePath() const
+        {
+            return q->stateCacheDir().filePath("state.json");
+        }
 };
 
 Connection::Connection(const QUrl& server, QObject* parent)
@@ -1257,7 +1261,8 @@ void Connection::saveRoomState(Room* r) const
     if (!d->cacheState)
         return;
 
-    QFile outRoomFile { stateCachePath() % SyncData::fileNameForRoom(r->id()) };
+    QFile outRoomFile {
+            stateCacheDir().filePath(SyncData::fileNameForRoom(r->id())) };
     if (outRoomFile.open(QFile::WriteOnly))
     {
         QJsonDocument json { r->toJson() };
@@ -1278,7 +1283,7 @@ void Connection::saveState() const
 
     QElapsedTimer et; et.start();
 
-    QFile outFile { stateCachePath() % "state.json" };
+    QFile outFile { d->topLevelStatePath() };
     if (!outFile.open(QFile::WriteOnly))
     {
         qCWarning(MAIN) << "Error opening" << outFile.fileName()
@@ -1338,7 +1343,7 @@ void Connection::loadState()
 
     QElapsedTimer et; et.start();
 
-    SyncData sync { stateCachePath() % "state.json" };
+    SyncData sync { d->topLevelStatePath() };
     if (sync.nextBatch().isEmpty()) // No token means no cache by definition
         return;
 
@@ -1355,6 +1360,11 @@ void Connection::loadState()
 }
 
 QString Connection::stateCachePath() const
+{
+    return stateCacheDir().path() % '/';
+}
+
+QDir Connection::stateCacheDir() const
 {
     auto safeUserId = userId();
     safeUserId.replace(':', '_');
