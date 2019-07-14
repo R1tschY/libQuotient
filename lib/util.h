@@ -28,12 +28,14 @@
 #include <functional>
 #include <memory>
 
+#if defined(__has_cpp_attribute)
 #if __has_cpp_attribute(fallthrough)
 #define FALLTHROUGH [[fallthrough]]
 #elif __has_cpp_attribute(clang::fallthrough)
 #define FALLTHROUGH [[clang::fallthrough]]
 #elif __has_cpp_attribute(gnu::fallthrough)
 #define FALLTHROUGH [[gnu::fallthrough]]
+#endif
 #else
 #define FALLTHROUGH // -fallthrough
 #endif
@@ -239,8 +241,8 @@ namespace QMatrixClient
     }
 
     // Poor-man's is_invokable
-    template <typename T>
-    constexpr auto is_callable_v = function_traits<T>::is_callable;
+    //template <typename T>
+    //constexpr auto is_callable_v = function_traits<T>::is_callable;
 
     inline auto operator"" _ls(const char* s, std::size_t size)
     {
