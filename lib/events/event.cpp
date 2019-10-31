@@ -29,10 +29,10 @@ event_type_t EventTypeRegistry::initializeTypeId(event_mtype_t matrixTypeId)
     const auto id = get().eventTypes.size();
     get().eventTypes.push_back(matrixTypeId);
     if (strncmp(matrixTypeId, "", 1) == 0)
-        qDebug(EVENTS) << "Initialized unknown event type with id" << id;
+        qCDebug(EVENTS) << "Initialized unknown event type with id" << id;
     else
-        qDebug(EVENTS) << "Initialized event type" << matrixTypeId
-                       << "with id" << id;
+        qCDebug(EVENTS) << "Initialized event type" << matrixTypeId
+                        << "with id" << id;
     return id;
 }
 

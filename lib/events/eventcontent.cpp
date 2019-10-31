@@ -53,7 +53,7 @@ FileInfo::FileInfo(const QUrl& u, const QJsonObject& infoJson,
 bool FileInfo::isValid() const
 {
     return url.scheme() == "mxc"
-            && (url.authority() + url.path()).count('/') == 1;
+            && QString(url.authority() + url.path()).count('/') == 1;
 }
 
 void FileInfo::fillInfoJson(QJsonObject* infoJson) const

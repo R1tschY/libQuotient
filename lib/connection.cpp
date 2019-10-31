@@ -402,11 +402,11 @@ void Connection::onSyncSuccess(SyncData &&data, bool fromCache) {
             d->roomIdsToForget.removeAt(forgetIdx);
             if (roomData.joinState == JoinState::Leave)
             {
-                qDebug(MAIN) << "Room" << roomData.roomId
+                qCDebug(MAIN) << "Room" << roomData.roomId
                     << "has been forgotten, ignoring /sync response for it";
                 continue;
             }
-            qWarning(MAIN) << "Room" << roomData.roomId
+            qCWarning(MAIN) << "Room" << roomData.roomId
                  << "has just been forgotten but /sync returned it in"
                  << toCString(roomData.joinState)
                  << "state - suspiciously fast turnaround";
@@ -503,7 +503,7 @@ void Connection::onSyncSuccess(SyncData &&data, bool fromCache) {
               });
     }
     if (!d->dcLocalAdditions.isEmpty() || !d->dcLocalRemovals.isEmpty()) {
-        qDebug(MAIN) << "Sending updated direct chats to the server:"
+        qCDebug(MAIN) << "Sending updated direct chats to the server:"
                      << d->dcLocalRemovals.size() << "removal(s),"
                      << d->dcLocalAdditions.size() << "addition(s)";
         callApi<SetAccountDataJob>(d->userId, QStringLiteral("m.direct"),

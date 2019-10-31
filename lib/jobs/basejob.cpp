@@ -532,12 +532,15 @@ QByteArray BaseJob::rawData(int bytesAtMost) const
 
 QString BaseJob::rawDataSample(int bytesAtMost) const
 {
-    auto data = rawData(bytesAtMost);
+    QString data = rawData(bytesAtMost);
     Q_ASSERT(data.size() <= d->rawResponse.size());
-    return data.size() == d->rawResponse.size()
-            ? data : data + tr("...(truncated, %Ln bytes in total)",
-                               "Comes after trimmed raw network response",
-                               d->rawResponse.size());
+    if (data.size() == d->rawResponse.size())
+        return data;
+
+    return data + tr(
+        "...(truncated, %Ln bytes in total)",
+        "Comes after trimmed raw network response",
+        d->rawResponse.size());
 
 }
 

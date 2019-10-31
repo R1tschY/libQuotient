@@ -73,7 +73,7 @@ QString QMatrixClient::sanitized(const QString& plainText)
 
 QString QMatrixClient::prettyPrint(const QString& plainText)
 {
-    auto pt = QStringLiteral("<span style='white-space:pre-wrap'>") +
+    QString pt = QStringLiteral("<span style='white-space:pre-wrap'>") +
                 plainText.toHtmlEscaped() + QStringLiteral("</span>");
     pt.replace('\n', QStringLiteral("<br/>"));
 

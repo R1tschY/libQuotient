@@ -1401,8 +1401,8 @@ QString Room::Private::doSendEvent(const RoomEvent* pEvent)
                 auto it = q->findPendingEvent(txnId);
                 if (it == unsyncedEvents.end())
                 {
-                    qWarning(EVENTS) << "Pending event for transaction" << txnId
-                                     << "not found - got synced so soon?";
+                    qCWarning(EVENTS) << "Pending event for transaction" << txnId
+                                      << "not found - got synced so soon?";
                     return;
                 }
                 it->setDeparted();
@@ -1416,8 +1416,8 @@ QString Room::Private::doSendEvent(const RoomEvent* pEvent)
                 auto it = q->findPendingEvent(txnId);
                 if (it == unsyncedEvents.end())
                 {
-                    qDebug(EVENTS) << "Pending event for transaction" << txnId
-                                   << "already merged";
+                    qCDebug(EVENTS) << "Pending event for transaction" << txnId
+                                    << "already merged";
                     return;
                 }
 
@@ -1434,8 +1434,8 @@ void Room::Private::onEventSendingFailure(const QString& txnId, BaseJob* call)
     auto it = q->findPendingEvent(txnId);
     if (it == unsyncedEvents.end())
     {
-        qCritical(EVENTS) << "Pending event for transaction" << txnId
-                          << "could not be sent";
+        qCCritical(EVENTS) << "Pending event for transaction" << txnId
+                           << "could not be sent";
         return;
     }
     it->setSendingFailed(call
@@ -1448,7 +1448,7 @@ QString Room::retryMessage(const QString& txnId)
 {
     const auto it = findPendingEvent(txnId);
     Q_ASSERT(it != d->unsyncedEvents.end());
-    qDebug(EVENTS) << "Retrying transaction" << txnId;
+    qCDebug(EVENTS) << "Retrying transaction" << txnId;
     const auto& transferIt = d->fileTransfers.find(txnId);
     if (transferIt != d->fileTransfers.end())
     {
@@ -1484,7 +1484,7 @@ void Room::discardMessage(const QString& txnId)
     auto it = std::find_if(d->unsyncedEvents.begin(), d->unsyncedEvents.end(),
             [txnId] (const auto& evt) { return evt->transactionId() == txnId; });
     Q_ASSERT(it != d->unsyncedEvents.end());
-    qDebug(EVENTS) << "Discarding transaction" << txnId;
+    qCDebug(EVENTS) << "Discarding transaction" << txnId;
     const auto& transferIt = d->fileTransfers.find(txnId);
     if (transferIt != d->fileTransfers.end())
     {
@@ -2069,9 +2069,9 @@ Room::Changes Room::Private::addNewMessageEvents(RoomEvents&& events)
         const auto pendingEvtIdx =
                 int(nextPendingPair.second - unsyncedEvents.begin());
         emit q->pendingEventAboutToMerge(nextPendingEvt, pendingEvtIdx);
-        qDebug(EVENTS) << "Merging pending event from transaction"
-                       << nextPendingEvt->transactionId() << "into"
-                       << nextPendingEvt->id();
+        qCDebug(EVENTS) << "Merging pending event from transaction"
+                        << nextPendingEvt->transactionId() << "into"
+                        << nextPendingEvt->id();
         auto transfer = fileTransfers.take(nextPendingEvt->transactionId());
         if (transfer.status != FileTransferInfo::None)
             fileTransfers.insert(nextPendingEvt->id(), transfer);
@@ -2521,8 +2521,8 @@ void Room::Private::updateDisplayname()
     {
         emit q->displaynameAboutToChange(q);
         swap(displayname, swappedName);
-        qDebug(MAIN) << q->objectName() << "has changed display name from"
-                     << swappedName << "to" << displayname;
+        qCDebug(MAIN) << q->objectName() << "has changed display name from"
+                      << swappedName << "to" << displayname;
         emit q->displaynameChanged(q, swappedName);
     }
 }
