@@ -109,7 +109,7 @@ void ConnectionData::limitRate(std::chrono::milliseconds nextCallAfter)
 {
     qCDebug(MAIN) << "Jobs for" << (d->userId + "/" + d->deviceId)
                   << "suspended for" << nextCallAfter.count() << "ms";
-    d->rateLimiter.start(nextCallAfter);
+    d->rateLimiter.start(int(nextCallAfter.count()));
 }
 
 QByteArray ConnectionData::accessToken() const { return d->accessToken; }

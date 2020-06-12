@@ -298,3 +298,9 @@ qreal stringToHueF(const QString& s);
 /** Extract the serverpart from MXID */
 QString serverPart(const QString& mxId);
 } // namespace Quotient
+
+template <class T>
+constexpr std::add_const_t<T>& qAsConst(T& t) noexcept
+{
+    return t;
+}

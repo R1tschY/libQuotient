@@ -1,9 +1,10 @@
 #pragma once
 
 #include <qobjectdefs.h>
+#include <QObject>
 
 namespace Quotient {
-Q_NAMESPACE
+//Q_NAMESPACE
 
 /** Enumeration with flags defining the network job running policy
  * So far only background/foreground flags are available.
@@ -12,7 +13,7 @@ Q_NAMESPACE
  */
 enum RunningPolicy { ForegroundRequest = 0x0, BackgroundRequest = 0x1 };
 
-Q_ENUM_NS(RunningPolicy)
+//Q_ENUM_NS(RunningPolicy)
 
 enum UriResolveResult : short {
     StillResolving = -1,
@@ -22,7 +23,7 @@ enum UriResolveResult : short {
     InvalidUri,
     NoAccount
 };
-Q_ENUM_NS(UriResolveResult)
+//Q_ENUM_NS(UriResolveResult)
 
 } // namespace Quotient
 /// \deprecated Use namespace Quotient instead

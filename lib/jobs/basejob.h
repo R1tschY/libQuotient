@@ -22,6 +22,9 @@
 #include "../logging.h"
 #include "../converters.h"
 
+#include <chrono>
+
+#include <QtCore/QJsonDocument>
 #include <QtCore/QObject>
 
 class QNetworkReply;

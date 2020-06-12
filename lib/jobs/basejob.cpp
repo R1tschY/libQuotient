@@ -304,17 +304,20 @@ void BaseJob::Private::sendRequest()
     req.setAttribute(QNetworkRequest::BackgroundRequestAttribute, inBackground);
     req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     req.setMaximumRedirectsAllowed(10);
-    req.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
-    req.setAttribute(
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-        QNetworkRequest::Http2AllowedAttribute
-#else
-        QNetworkRequest::HTTP2AllowedAttribute
-#endif
-    // Qt doesn't combine HTTP2 with SSL quite right, occasionally crashing at
-    // what seems like an attempt to write to a closed channel. If/when that
-    // changes, false should be turned to true below.
-        , false);
+
+    // Pipelining doesn't fly quite well with SSL, occasionally crashing at
+    // what seems like an attempt to write to a closed channel.
+    //req.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+//    req.setAttribute(
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+//        QNetworkRequest::Http2AllowedAttribute
+//#else
+//        QNetworkRequest::HTTP2AllowedAttribute
+//#endif
+//    // Qt doesn't combine HTTP2 with SSL quite right, occasionally crashing at
+//    // what seems like an attempt to write to a closed channel. If/when that
+//    // changes, false should be turned to true below.
+//        , false);
     Q_ASSERT(req.url().isValid());
     for (auto it = requestHeaders.cbegin(); it != requestHeaders.cend(); ++it)
         req.setRawHeader(it.key(), it.value());
@@ -397,7 +400,8 @@ void BaseJob::sendRequest()
                 &BaseJob::uploadProgress);
         connect(reply(), &QNetworkReply::downloadProgress, this,
                 &BaseJob::downloadProgress);
-        d->timer.start(getCurrentTimeout());
+        d->timer.start(int(std::chrono::duration_cast<milliseconds>(
+            getCurrentTimeout()).count()));
         qCInfo(d->logCat).noquote() << "Sent" << d->dumpRequest();
         onSentRequest(reply());
         emit sentRequest();
@@ -626,7 +630,7 @@ void BaseJob::finishJob()
                 << this << ": retry #" << d->retriesTaken << " in "
                 << retryIn.count() << " s";
             setStatus(Pending, "Pending retry");
-            d->retryTimer.start(retryIn);
+            d->retryTimer.start((int)milliseconds(retryIn).count());
             emit retryScheduled(d->retriesTaken, milliseconds(retryIn).count());
             return;
         }
@@ -670,8 +674,8 @@ BaseJob::duration_ms_t BaseJob::getNextRetryMs() const
 
 milliseconds BaseJob::timeToRetry() const
 {
-    return d->retryTimer.isActive() ? d->retryTimer.remainingTimeAsDuration()
-                                    : 0s;
+    return d->retryTimer.isActive()
+        ? milliseconds(d->retryTimer.remainingTime()) : 0s;
 }
 
 BaseJob::duration_ms_t BaseJob::millisToRetry() const
