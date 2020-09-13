@@ -42,8 +42,8 @@ public:
     {
         QString algo = content<QString>(AlgorithmKeyL);
         if (!SupportedAlgorithms.contains(algo)) {
-            qWarning(MAIN) << "The EncryptedEvent's algorithm" << algo
-                           << "is not supported";
+            qCWarning(MAIN) << "The EncryptedEvent's algorithm" << algo
+                            << "is not supported";
         }
         return algo;
     }

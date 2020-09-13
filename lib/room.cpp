@@ -1153,9 +1153,9 @@ QString Room::Private::fileNameToDownload(const RoomMessageEvent* event) const
     if (!fileInfo->originalName.isEmpty())
         fileName = QFileInfo(safeFileName(fileInfo->originalName)).fileName();
     else if (QUrl u { event->plainBody() }; u.isValid()) {
-        qDebug(MAIN) << event->id()
-                     << "has no file name supplied but the event body "
-                        "looks like a URL - using the file name from it";
+        qCDebug(MAIN) << event->id()
+                      << "has no file name supplied but the event body "
+                         "looks like a URL - using the file name from it";
         fileName = u.fileName();
     }
     if (fileName.isEmpty())
@@ -1600,8 +1600,8 @@ void Room::Private::onEventSendingFailure(const QString& txnId, BaseJob* call)
 {
     auto it = q->findPendingEvent(txnId);
     if (it == unsyncedEvents.end()) {
-        qCritical(EVENTS) << "Pending event for transaction" << txnId
-                          << "could not be sent";
+        qCCritical(EVENTS) << "Pending event for transaction" << txnId
+                           << "could not be sent";
         return;
     }
     it->setSendingFailed(call ? call->statusCaption() % ": " % call->errorString()
@@ -1973,7 +1973,7 @@ void Room::downloadFile(const QString& eventId, const QUrl& localFilename)
             filePath.replace(128, filePath.size() - 192, "---");
 
         filePath = QDir::tempPath() % '/' % filePath;
-        qDebug(MAIN) << "File path:" << filePath;
+        qCDebug(MAIN) << "File path:" << filePath;
     }
     auto job = connection()->downloadFile(fileUrl, filePath);
     if (isJobRunning(job)) {

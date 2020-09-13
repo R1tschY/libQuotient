@@ -33,7 +33,7 @@ public:
             QObject::connect(socket, &QTcpSocket::readyRead, socket, [this] {
                 requestData.append(socket->readAll());
                 if (!socket->atEnd() && !requestData.endsWith("\r\n\r\n")) {
-                    qDebug(MAIN) << "Incomplete request, waiting for more data";
+                    qCDebug(MAIN) << "Incomplete request, waiting for more data";
                     return;
                 }
                 processCallback();

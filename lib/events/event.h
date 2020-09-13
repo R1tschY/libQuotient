@@ -198,7 +198,7 @@ private:
 template <typename EventT>
 inline auto setupFactory()
 {
-    qDebug(EVENTS) << "Adding factory method for" << EventT::matrixTypeId();
+    qCDebug(EVENTS) << "Adding factory method for" << EventT::matrixTypeId();
     return EventT::factory_t::addMethod([](const QJsonObject& json,
                                            const QString& jsonMatrixType) {
         return EventT::matrixTypeId() == jsonMatrixType ? makeEvent<EventT>(json)
