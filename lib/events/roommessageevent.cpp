@@ -313,7 +313,7 @@ TextContent::TextContent(const QJsonObject& json)
     const auto actualJson = isReplacement(relatesTo)
                                 ? json.value("m.new_content"_ls).toObject()
                                 : json;
-    // Special-casing the custom matrix.org's (actually, Riot's) way
+    // Special-casing the custom matrix.org's (actually, Element's) way
     // of sending HTML messages.
     if (actualJson["format"_ls].toString() == HtmlContentTypeId) {
         mimeType = HtmlMimeType;
@@ -338,12 +338,15 @@ void TextContent::fillJson(QJsonObject* json) const
     }
     if (relatesTo) {
         json->insert(QStringLiteral("m.relates_to"),
-                     QJsonObject { { "rel_type", relatesTo->type }, { EventIdKey, relatesTo->eventId } });
+                     relatesTo->type == RelatesTo::ReplyTypeId() ?
+                         QJsonObject { { relatesTo->type, QJsonObject{ { EventIdKey, relatesTo->eventId } } } } :
+                         QJsonObject { { "rel_type", relatesTo->type }, { EventIdKey, relatesTo->eventId } }
+        );
         if (relatesTo->type == RelatesTo::ReplacementTypeId()) {
             QJsonObject newContentJson;
             if (mimeType.inherits("text/html")) {
-                json->insert(FormatKey, HtmlContentTypeId);
-                json->insert(FormattedBodyKey, body);
+                newContentJson.insert(FormatKey, HtmlContentTypeId);
+                newContentJson.insert(FormattedBodyKey, body);
             }
             json->insert(QStringLiteral("m.new_content"), newContentJson);
         }
